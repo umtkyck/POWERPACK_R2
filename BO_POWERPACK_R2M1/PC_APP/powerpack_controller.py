@@ -285,10 +285,10 @@ class PowerPackController:
                 self.update_status("âŒ Not connected")
                 return
             
-            self.update_status("ðŸ”§ Debug Test: Testing USB communication...")
+            self.update_status("[DEBUG] Debug Test: Testing USB communication...")
             
             # Test 1: Simple status command
-            self.update_status("ðŸ”§ Test 1: Sending status command (0x05)")
+            self.update_status("[DEBUG] Test 1: Sending status command (0x05)")
             raw_data = bytes([0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
             self.controller.serial_conn.reset_input_buffer()
             self.controller.serial_conn.write(raw_data)
@@ -297,12 +297,12 @@ class PowerPackController:
             
             if self.controller.serial_conn.in_waiting > 0:
                 response = self.controller.serial_conn.read(self.controller.serial_conn.in_waiting)
-                self.update_status(f"ðŸ”§ Status Response: {[hex(b) for b in response]}")
+                self.update_status(f"[DEBUG] Status Response: {[hex(b) for b in response]}")
             else:
-                self.update_status("ðŸ”§ No status response")
+                self.update_status("[DEBUG] No status response")
             
             # Test 2: Version command
-            self.update_status("ðŸ”§ Test 2: Sending version command (0x0A)")
+            self.update_status("[DEBUG] Test 2: Sending version command (0x0A)")
             raw_data = bytes([0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
             self.controller.serial_conn.reset_input_buffer()
             self.controller.serial_conn.write(raw_data)
@@ -311,12 +311,12 @@ class PowerPackController:
             
             if self.controller.serial_conn.in_waiting > 0:
                 response = self.controller.serial_conn.read(self.controller.serial_conn.in_waiting)
-                self.update_status(f"ðŸ”§ Version Response: {[hex(b) for b in response]}")
+                self.update_status(f"[DEBUG] Version Response: {[hex(b) for b in response]}")
             else:
-                self.update_status("ðŸ”§ No version response")
+                self.update_status("[DEBUG] No version response")
             
             # Test 3: Invalid command
-            self.update_status("ðŸ”§ Test 3: Sending invalid command (0xFF)")
+            self.update_status("[DEBUG] Test 3: Sending invalid command (0xFF)")
             raw_data = bytes([0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
             self.controller.serial_conn.reset_input_buffer()
             self.controller.serial_conn.write(raw_data)
@@ -325,14 +325,14 @@ class PowerPackController:
             
             if self.controller.serial_conn.in_waiting > 0:
                 response = self.controller.serial_conn.read(self.controller.serial_conn.in_waiting)
-                self.update_status(f"ðŸ”§ Invalid Response: {[hex(b) for b in response]}")
+                self.update_status(f"[DEBUG] Invalid Response: {[hex(b) for b in response]}")
             else:
-                self.update_status("ðŸ”§ No invalid command response")
+                self.update_status("[DEBUG] No invalid command response")
             
-            self.update_status("ðŸ”§ Debug test completed. Check STM32 LEDs for activity.")
+            self.update_status("[DEBUG] Debug test completed. Check STM32 LEDs for activity.")
                 
         except Exception as e:
-            self.update_status(f"ðŸ”§ Debug test failed: {e}")
+            self.update_status(f"[DEBUG] Debug test failed: {e}")
     
     def get_status(self):
         """Request status from device"""
@@ -699,7 +699,7 @@ class PowerPackGUI:
                 
                 if current_state:
                     # Just connected
-                    self.update_status("âœ… Device connected and communicating")
+                    self.update_status("[OK] Device connected and communicating")
                     self.connect_btn.config(state="disabled")
                     self.disconnect_btn.config(state="normal")
                     self.port_combo.config(state="disabled")
@@ -709,7 +709,7 @@ class PowerPackGUI:
                     if self.controller.serial_conn:
                         self.update_status("âŒ Communication lost - device disconnected")
                     else:
-                        self.update_status("âšª Ready to connect")
+                        self.update_status("[INFO] Ready to connect")
                     
                     self.connect_btn.config(state="normal")
                     self.disconnect_btn.config(state="disabled")
@@ -770,7 +770,7 @@ class PowerPackGUI:
             else:
                 self.port_combo.current(0)
         
-        self.update_status(f"ðŸ“¡ Found {len(ports)} USB ports")
+        self.update_status(f"[INFO] Found {len(ports)} USB ports")
     
     def connect_usb(self):
         """Connect via USB"""
@@ -781,7 +781,7 @@ class PowerPackGUI:
                 return
             
             port = self.controller.extract_port_from_selection(port_selection)
-            self.update_status(f"ðŸ”Œ Connecting to {port}...")
+            self.update_status(f"[INFO] Connecting to {port}...")
             
             # Disable UI during connection
             self.connect_btn.config(state="disabled")
@@ -791,22 +791,22 @@ class PowerPackGUI:
             
             if self.controller.connect_usb(port):
                 self.controller.start_monitoring()
-                self.update_status(f"âœ… Connected to {port}")
+                self.update_status(f"[OK] Connected to {port}")
                 
                 # Wait a moment for connection to stabilize
                 time.sleep(2)
                 
                 # Request initial data with delays
                 try:
-                    self.update_status("ðŸ“‹ Requesting firmware version...")
+                    self.update_status("[VERSION] Requesting firmware version...")
                     self.controller.get_version()
                     time.sleep(1)
                     
-                    self.update_status("ðŸ“Š Requesting device status...")
+                    self.update_status("[INFO] Requesting device status...")
                     self.controller.get_status()
                     
                 except Exception as e:
-                    self.update_status(f"âš ï¸ Initial communication failed: {e}")
+                    self.update_status(f"[WARN] Initial communication failed: {e}")
                 
             else:
                 self.update_status("âŒ Connection failed")
@@ -826,15 +826,15 @@ class PowerPackGUI:
     
     def disconnect(self):
         """Disconnect from device"""
-        self.update_status("ðŸ”Œ Disconnecting...")
+        self.update_status("[INFO] Disconnecting...")
         self.controller.disconnect()
-        self.update_status("âšª Disconnected")
+        self.update_status("[INFO] Disconnected")
     
     def set_relay(self, relay_num, state):
         """Set relay state"""
         try:
             self.controller.set_relay(relay_num, state)
-            self.update_status(f"ðŸ”Œ Relay {relay_num} {'ON' if state else 'OFF'}")
+            self.update_status(f"[RELAY] Relay {relay_num} {'ON' if state else 'OFF'}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to set relay: {e}")
     
@@ -880,13 +880,13 @@ class PowerPackGUI:
                     response = self.controller.status_queue.get_nowait()
                     if response['type'] == 'version':
                         self.firmware_version_label.config(text=f"STM32 Firmware: {response['version']}")
-                        self.update_status(f"ðŸ“‹ Firmware version: {response['version']}")
+                        self.update_status(f"[VERSION] Firmware version: {response['version']}")
                         return
                 except queue.Empty:
                     time.sleep(0.1)
             
             # Timeout reached
-            self.update_status("âš ï¸ Version request timeout - no response from device")
+            self.update_status("[WARN] Version request timeout - no response from device")
             
         except Exception as e:
             self.controller.logger.error(f"Failed to request version: {e}")
@@ -899,25 +899,25 @@ class PowerPackGUI:
                 self.update_status("âŒ Not connected")
                 return
             
-            self.update_status("ðŸ”§ Debug Test: Sending raw version command...")
+            self.update_status("[DEBUG] Debug Test: Sending raw version command...")
             
             # Send raw version command
             raw_data = bytes([0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
             self.controller.serial_conn.write(raw_data)
             self.controller.serial_conn.flush()
             
-            self.update_status(f"ðŸ”§ Sent raw bytes: {[hex(b) for b in raw_data]}")
+            self.update_status(f"[DEBUG] Sent raw bytes: {[hex(b) for b in raw_data]}")
             
             # Wait and read response
             time.sleep(0.5)
             if self.controller.serial_conn.in_waiting > 0:
                 response = self.controller.serial_conn.read(self.controller.serial_conn.in_waiting)
-                self.update_status(f"ðŸ”§ Received bytes: {[hex(b) for b in response]}")
+                self.update_status(f"[DEBUG] Received bytes: {[hex(b) for b in response]}")
             else:
-                self.update_status("ðŸ”§ No response received")
+                self.update_status("[DEBUG] No response received")
                 
         except Exception as e:
-            self.update_status(f"ðŸ”§ Debug test failed: {e}")
+            self.update_status(f"[DEBUG] Debug test failed: {e}")
     
     def all_off(self):
         """Turn everything off"""
@@ -1012,7 +1012,7 @@ class PowerPackGUI:
                 elif response['type'] == 'version':
                     # Update firmware version display
                     self.firmware_version_label.config(text=f"STM32 Firmware: {response['version']}")
-                    self.update_status(f"ðŸ“‹ Firmware version: {response['version']}")
+                    self.update_status(f"[VERSION] Firmware version: {response['version']}")
                 
         except queue.Empty:
             pass

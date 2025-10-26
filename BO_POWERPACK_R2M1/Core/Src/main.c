@@ -57,7 +57,7 @@ typedef struct {
 // Firmware version
 #define FIRMWARE_VERSION_MAJOR  2
 #define FIRMWARE_VERSION_MINOR  0
-#define FIRMWARE_VERSION_PATCH  0
+#define FIRMWARE_VERSION_PATCH  1
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
