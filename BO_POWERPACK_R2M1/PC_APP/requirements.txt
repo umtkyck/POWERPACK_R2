@@ -1,0 +1,36 @@
+# PowerPack Controller - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Serial communication for USB CDC interface
+pyserial>=3.5
+
+# GUI framework (usually included with Python)
+# tkinter is part of Python standard library on most systems
+
+# Development and debugging tools (optional)
+# Uncomment if needed for development
+
+# Enhanced logging and debugging
+# colorlog>=6.0.0
+
+# Serial port discovery and management
+# pyserial-asyncio>=0.6
+
+# Configuration file support
+# configparser  # Part of Python standard library
+
+# Data visualization (optional)
+# matplotlib>=3.5.0
+# numpy>=1.21.0
+
+# GUI enhancements (optional)
+# tkinter-tooltip>=2.0.0
+# ttkthemes>=3.2.0
+
+# Testing framework (optional)
+# pytest>=7.0.0
+# pytest-mock>=3.6.0
+
+# Documentation (optional)
+# sphinx>=4.5.0
+# sphinx-rtd-theme>=1.0.0
